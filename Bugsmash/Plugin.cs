@@ -21,19 +21,21 @@ public class Plugin
     internal static bool IsCompatible { get; private set; }
     internal static bool IsCustomJSONDataInstalled { get; private set; }
     internal static Harmony HarmonyInstance { get; } = new Harmony("com.github.whatdahopper.Bugsmash");
+    internal static IPALogger Log { get; private set; } = null!;
 
     [Init]
     public Plugin(IPALogger logger)
     {
+        Log = logger;
+
         string gameVersion = Application.version;
         if (gameVersion != CompatibleGameVersion)
         {
-            logger.Error($"Game version \"{gameVersion}\" is not compatible, expected: \"{CompatibleGameVersion}\".");
+            Log.Error($"Game version \"{gameVersion}\" is not compatible, expected: \"{CompatibleGameVersion}\".");
             return;
         }
 
         IsCompatible = true;
-        IsCustomJSONDataInstalled = PluginManager.GetPluginFromId("CustomJSONData") != null;
     }
 
     [OnEnable]
@@ -41,6 +43,10 @@ public class Plugin
     {
         if (!IsCompatible)
             return;
+
+        IsCustomJSONDataInstalled = PluginManager.GetPluginFromId("CustomJSONData") != null;
+
+        Log.Info($"IsCompatible: {IsCompatible}, IsCustomJSONDataInstalled: {IsCustomJSONDataInstalled}");
 
         HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 
