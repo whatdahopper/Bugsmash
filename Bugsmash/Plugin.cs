@@ -20,7 +20,6 @@ public class Plugin
 
     internal static bool IsCompatible { get; private set; }
     internal static bool IsCustomJSONDataInstalled { get; private set; }
-
     internal static Harmony HarmonyInstance { get; } = new Harmony("com.github.whatdahopper.Bugsmash");
 
     [Init]
