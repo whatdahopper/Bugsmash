@@ -1,5 +1,4 @@
-﻿using BeatmapSaveDataVersion2_6_0AndEarlier;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,14 +8,17 @@ namespace Bugsmash.HarmonyPatches;
 
 // Resolves an issue where v2 rotation events are not handled correctly.
 
-[HarmonyPatch(typeof(RotationTimeProcessor), MethodType.Constructor, typeof(IReadOnlyList<EventData>))]
+[HarmonyPatch(typeof(RotationTimeProcessor), MethodType.Constructor, typeof(IReadOnlyList<BeatmapSaveDataVersion2_6_0AndEarlier.EventData>))]
 internal class RotationTimeProcessorConstructor
 {
     private const string GetValueMethodName = "get_value";
     private const string GetFloatValueMethodName = "get_floatValue";
-    private static readonly MethodInfo _getValueMethod = typeof(EventData).GetMethod(GetValueMethodName);
-    private static readonly MethodInfo _spawnRotationForEventValueMethod = SymbolExtensions.GetMethodInfo(() => SpawnRotationForEventValue(0));
-    private static readonly FieldInfo _rotationChangeDataListField = typeof(RotationTimeProcessor).GetField("_rotationChangeDataList", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Instance);
+    private static readonly MethodInfo _getValueMethod =
+        typeof(BeatmapSaveDataVersion2_6_0AndEarlier.EventData).GetMethod(GetValueMethodName);
+    private static readonly MethodInfo _spawnRotationForEventValueMethod =
+        SymbolExtensions.GetMethodInfo(() => SpawnRotationForEventValue(0));
+    private static readonly FieldInfo _rotationChangeDataListField =
+        typeof(RotationTimeProcessor).GetField("_rotationChangeDataList", BindingFlags.Instance | BindingFlags.NonPublic);
     private static readonly float[] _spawnRotations = new float[8] { -60f, -45f, -30f, -15f, 15f, 30f, 45f, 60f };
 
     protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

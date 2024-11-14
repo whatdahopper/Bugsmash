@@ -7,8 +7,10 @@ namespace Bugsmash.Utilities;
 
 internal class PatchUtil
 {
-    private static readonly ConstructorInfo _randomCtor = typeof(System.Random).GetConstructor(new[] { typeof(int) });
-    private static readonly MethodInfo _getInstanceID = typeof(UnityEngine.Object).GetMethod(nameof(UnityEngine.Object.GetInstanceID));
+    private static readonly ConstructorInfo _randomCtor =
+        typeof(System.Random).GetConstructor(new[] { typeof(int) });
+    private static readonly MethodInfo _getInstanceID =
+        typeof(UnityEngine.Object).GetMethod(nameof(UnityEngine.Object.GetInstanceID));
 
     public static void FixRandomSeed(ref List<CodeInstruction> codes)
     {
