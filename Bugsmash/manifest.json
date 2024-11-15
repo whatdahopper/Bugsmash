@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
   "id": "Bugsmash",
   "name": "Bugsmash",
-  "author": "Kaitlyn",
+  "author": "whatdahopper",
   "version": "1.0.0",
   "description": "Community-driven efforts to fix bugs inside Beat Saber.",
   "gameVersion": "1.39.0",
