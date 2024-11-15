@@ -14,8 +14,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <!-- Managed -->
-    <Reference Include="BeatmapCore" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll" />
-    <Reference Include="BGLib.DotnetExtension" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.DotnetExtension.dll" />
     <Reference Include="DataModels" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll" Publicize="true" />
     <Reference Include="IPA.Loader" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll" />
     <Reference Include="Main" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll" Publicize="true" />

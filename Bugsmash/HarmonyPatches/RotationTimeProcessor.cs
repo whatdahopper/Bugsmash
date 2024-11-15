@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -11,63 +10,50 @@ namespace Bugsmash.HarmonyPatches;
 [HarmonyPatch(typeof(RotationTimeProcessor), MethodType.Constructor, typeof(IReadOnlyList<BeatmapSaveDataVersion2_6_0AndEarlier.EventData>))]
 internal class RotationTimeProcessorConstructor
 {
-    private const string GetValueMethodName = "get_value";
-    private const string GetFloatValueMethodName = "get_floatValue";
     private static readonly MethodInfo _getValueMethod =
-        typeof(BeatmapSaveDataVersion2_6_0AndEarlier.EventData).GetMethod(GetValueMethodName);
+        AccessTools.PropertyGetter(typeof(BeatmapSaveDataVersion2_6_0AndEarlier.EventData), "value");
+    private static readonly MethodInfo _getFloatValueMethod =
+        AccessTools.PropertyGetter(typeof(BeatmapSaveDataVersion2_6_0AndEarlier.EventData), "floatValue");
+    private static readonly ConstructorInfo _rotationChangeDataConstructor =
+        AccessTools.Constructor(typeof(RotationTimeProcessor.RotationChangeData), new[] { typeof(float), typeof(int) });
     private static readonly MethodInfo _spawnRotationForEventValueMethod =
         SymbolExtensions.GetMethodInfo(() => SpawnRotationForEventValue(0));
-    private static readonly FieldInfo _rotationChangeDataListField =
-        typeof(RotationTimeProcessor).GetField("_rotationChangeDataList", BindingFlags.Instance | BindingFlags.NonPublic);
-    private static readonly float[] _spawnRotations = new float[8] { -60f, -45f, -30f, -15f, 15f, 30f, 45f, 60f };
+    private static readonly float[] _spawnRotations = new[] { -60f, -45f, -30f, -15f, 15f, 30f, 45f, 60f };
 
     protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        List<CodeInstruction> codes = instructions.ToList();
-        for (int i = 0; i < codes.Count - 1; i++)
-        {
-            if (codes[i].Is(OpCodes.Ldfld, _rotationChangeDataListField))
+        return new CodeMatcher(instructions)
+            .MatchForward(false, new CodeMatch(OpCodes.Callvirt, _getFloatValueMethod))
+            .ThrowIfInvalid("Couldn't find get_floatValue (callvirt)")
+            // Replace with proper rotation value.
+            .Repeat(m =>
             {
-                codes.RemoveRange(i + 2, 2);
-                codes.Insert(i + 2, new(OpCodes.Ldloc_0));
-
-                int count = 0;
-                for (int c = i; c >= 0; c--)
-                {
-                    if (codes[c].opcode == OpCodes.Callvirt && ((MethodInfo)codes[c].operand).Name == GetFloatValueMethodName)
-                    {
-                        // Make some changes, we need to get the proper spawn rotation instead of using float value
-                        List<CodeInstruction> toInsert = new()
-                        {
-                            new(OpCodes.Callvirt, _getValueMethod),
-                            new(OpCodes.Call, _spawnRotationForEventValueMethod)
-                        };
-                        if (count == 0)
-                        {
-                            toInsert.Add(new(OpCodes.Conv_I4));
-                            toInsert.Add(new(OpCodes.Add));
-                            toInsert.Add(new(OpCodes.Stloc_0));
-
-                            codes.RemoveAt(c + 1);
-                            codes.Insert(c - 3, new(OpCodes.Ldloc_0));
-                            c++;
-                        }
-
-                        codes.RemoveAt(c);
-                        codes.InsertRange(c, toInsert);
-                        count++;
-                    }
-                }
-                break;
-            }
-        }
-        return codes;
+                m.SetOperandAndAdvance(_getValueMethod)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, _spawnRotationForEventValueMethod));
+            })
+            .End()
+            // Convert to integer (from float) and add.
+            .MatchBack(false, new CodeMatch(OpCodes.Call, _spawnRotationForEventValueMethod))
+            .ThrowIfInvalid("Couldn't find SpawnRotationForEventValue (call)")
+            .Advance(1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Conv_I4), new CodeInstruction(OpCodes.Add))
+            .SetAndAdvance(OpCodes.Stloc_0, null)
+            // Load local integer rotation value.
+            .MatchBack(false, new CodeMatch(OpCodes.Ldloc_1), new CodeMatch(OpCodes.Ldloc_2))
+            .ThrowIfInvalid("Couldn't find ldloc.1 and ldloc.2")
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
+            // Lets use it when constructing RotationChangeData.
+            .MatchForward(false, new CodeMatch(OpCodes.Newobj, _rotationChangeDataConstructor))
+            .ThrowIfInvalid("Couldn't find RotationChangeData (newobj)")
+            // Remove integer conversion from here, as we no longer need it.
+            .Advance(-1)
+            .RemoveInstruction()
+            // Replace ldloc.s with ldloc.0 (the local integer rotation value).
+            .Advance(-1)
+            .SetAndAdvance(OpCodes.Ldloc_0, null)
+            .InstructionEnumeration();
     }
 
     private static float SpawnRotationForEventValue(int index)
-    {
-        if (index >= 0 && index < _spawnRotations.Length)
-            return _spawnRotations[index];
-        return 0f;
-    }
+        => index >= 0 && index < _spawnRotations.Length ? _spawnRotations[index] : 0f;
 }
