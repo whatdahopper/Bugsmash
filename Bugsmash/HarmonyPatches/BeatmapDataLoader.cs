@@ -23,7 +23,7 @@ internal class BeatmapDataLoaderGetBeatmapDataFromSaveData
     private static readonly MethodInfo _insertDefaultEventsConditionalMethod =
         SymbolExtensions.GetMethodInfo(() => InsertDefaultEventsConditional(null!, false));
 
-    protected static bool Prepare() => !HarmonyUtil.IsDisallowedPluginsInstalled(_disallowedPlugins);
+    protected static bool Prepare() => !PluginUtil.IsAnyPluginsInstalled(_disallowedPlugins);
 
     protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
