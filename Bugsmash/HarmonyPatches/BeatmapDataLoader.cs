@@ -1,5 +1,5 @@
-﻿using Bugsmash.Utilities;
-using HarmonyLib;
+﻿using HarmonyLib;
+using IPA.Loader;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -13,17 +13,12 @@ namespace Bugsmash.HarmonyPatches;
 [HarmonyPatch(typeof(BeatmapDataLoaderVersion2_6_0AndEarlier.BeatmapDataLoader), "GetBeatmapDataFromSaveData")]
 internal class BeatmapDataLoaderGetBeatmapDataFromSaveData
 {
-    private static string[] _disallowedPlugins = new[]
-    {
-        "CustomJSONData"
-    };
-
     private static readonly MethodInfo _insertDefaultEventsMethod =
         AccessTools.Method(typeof(DefaultEnvironmentEventsFactory), "InsertDefaultEvents");
     private static readonly MethodInfo _insertDefaultEventsConditionalMethod =
         SymbolExtensions.GetMethodInfo(() => InsertDefaultEventsConditional(null!, false));
 
-    protected static bool Prepare() => !PluginUtil.IsAnyPluginsInstalled(_disallowedPlugins);
+    protected static bool Prepare() => PluginManager.GetPluginFromId("CustomJSONData") == null;
 
     protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
