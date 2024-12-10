@@ -3,9 +3,9 @@
   "id": "Bugsmash",
   "name": "Bugsmash",
   "author": "whatdahopper",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Community-driven efforts to fix bugs inside Beat Saber.",
-  "gameVersion": "1.39.1",
+  "gameVersion": "1.40.0",
   "dependsOn": {
     "BSIPA": "^4.3.5"
   }
