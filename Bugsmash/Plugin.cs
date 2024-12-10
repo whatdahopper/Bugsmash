@@ -9,9 +9,6 @@ public class Plugin
 {
     internal static Harmony HarmonyInstance { get; } = new("com.github.whatdahopper.Bugsmash");
 
-    [Init]
-    public Plugin() { }
-
     [OnStart]
     public void OnStart() => HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 

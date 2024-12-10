@@ -1,4 +1,7 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Bugsmash.HarmonyPatches;
 
@@ -8,15 +11,23 @@ namespace Bugsmash.HarmonyPatches;
 [HarmonyPatch(typeof(BloomPrePassBackgroundColorsGradientFromColorSchemeColors), "Start")]
 internal class BloomPrePassBackgroundColorsGradientFromColorSchemeColorsStart
 {
-    protected static bool Prefix(BloomPrePassBackgroundColorsGradientFromColorSchemeColors __instance)
+    private static readonly MethodInfo _handleColorProviderDidChangeColorMethod =
+        AccessTools.Method(typeof(BloomPrePassBackgroundColorsGradientFromColorSchemeColors), "HandleColorProviderDidChangeColor");
+
+    protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        __instance.HandleColorProviderDidChangeColor();
-        return false;
+        return new List<CodeInstruction>()
+        {
+            new(OpCodes.Ldarg_0),
+            new(OpCodes.Call, _handleColorProviderDidChangeColorMethod),
+            new(OpCodes.Ret)
+        };
     }
 }
 
 [HarmonyPatch(typeof(BloomPrePassBackgroundColorsGradientFromColorSchemeColors), "OnDestroy")]
 internal class BloomPrePassBackgroundColorsGradientFromColorSchemeColorsOnDestroy
 {
-    protected static bool Prefix() => false;
+    protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
+        new List<CodeInstruction>() { new(OpCodes.Ret) };
 }
