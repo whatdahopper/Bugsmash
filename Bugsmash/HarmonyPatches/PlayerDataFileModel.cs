@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using UnityEngine;
 
 namespace Bugsmash.HarmonyPatches;
 
@@ -17,6 +18,8 @@ internal class PlayerDataFileModelGetPlayerSaveData
         AccessTools.Method(typeof(ColorScheme), "get_environmentColor0");
     private static readonly MethodInfo _getEnvironmentColor1Method =
         AccessTools.Method(typeof(ColorScheme), "get_environmentColor1");
+
+    protected static bool Prepare() => Application.version == "1.40.0_2229";
 
     protected static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
