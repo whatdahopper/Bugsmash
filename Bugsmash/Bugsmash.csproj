@@ -18,6 +18,7 @@
     <Reference Include="DataModels" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll" Publicize="true" />
     <Reference Include="IPA.Loader" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll" />
     <Reference Include="Main" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll" Publicize="true" />
+    <Reference Include="Unity.InputSystem" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.InputSystem.dll" Publicize="true" />
     <Reference Include="UnityEngine" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll" />
 
