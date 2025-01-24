@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.XR;
 
 namespace Bugsmash.HarmonyPatches;
 
-[HarmonyPatch(typeof(XRLayoutBuilder), nameof(XRLayoutBuilder.Build))]
+[HarmonyPatch(typeof(XRLayoutBuilder), "Build")]
 internal class XRLayoutBuilderBuild
 {
     private static readonly MethodInfo _stringToLowerMethod =
