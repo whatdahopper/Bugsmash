@@ -16,9 +16,11 @@
     <!-- Managed -->
     <Reference Include="Colors" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll" />
     <Reference Include="DataModels" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll" Publicize="true" />
+    <Reference Include="HMLib" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll" Private="false" Publicize="true" />
     <Reference Include="IPA.Loader" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll" />
     <Reference Include="Main" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll" Publicize="true" />
     <Reference Include="Unity.InputSystem" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.InputSystem.dll" Publicize="true" />
+    <Reference Include="Unity.XR.OpenXR" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.XR.OpenXR.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll" />
 
